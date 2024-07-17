@@ -72,6 +72,12 @@
                                 <span>Daftar Peminjaman</span>
                             </a>
                         </li>
+                        <li class="sidebar-item ">
+                            <a href="{{ route('pengembalian') }}" class='sidebar-link'>
+                                <i class="bi bi-stack"></i>
+                                <span>Daftar Pengembalian</span>
+                            </a>
+                        </li>
                         <li class="sidebar-title">Menu</li>
 
                         <li class="sidebar-item active  ">

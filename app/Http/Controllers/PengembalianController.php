@@ -7,26 +7,26 @@ use App\Models\MahasiswaModel;
 use App\Models\PeminjamanModel;
 use Illuminate\Http\Request;
 
-class PeminjamanController extends Controller
+class PengembalianController extends Controller
 {
     public function index(){
-        $peminjaman = PeminjamanModel::whereNull('tanggal_kembali')->get();
-        // dd($peminjaman);
+        $pengembalian = PeminjamanModel::all();
         $mahasiswas = MahasiswaModel::all();
         $bukus = BukuModel::all();
-        return view('admin.peminjaman.index', compact('peminjaman', 'mahasiswas', 'bukus'));
+        // dd($pengembalian);
+        return view('admin.pengembalian.index', compact('pengembalian', 'mahasiswas', 'bukus'));
     }
     public function destroy($id)
     {
         $peminjaman = PeminjamanModel::find($id);
 
         if (!$peminjaman) {
-            return redirect()->route('peminjaman')->with('error', 'Peminjaman not found.');
+            return redirect()->route('pengembalian')->with('error', 'Peminjaman not found.');
         }
 
         $peminjaman->delete();
 
-        return redirect()->route('peminjaman')->with('success', 'Peminjaman berhasil dihapus.');
+        return redirect()->route('pengembalian')->with('success', 'Peminjaman berhasil dihapus.');
     }
     public function store(Request $request)
     {
@@ -43,7 +43,7 @@ class PeminjamanController extends Controller
             'id_buku' => $request->buku_id,
         ]);
 
-        return redirect()->route('peminjaman')->with('success', 'Peminjaman berhasil ditambahkan.');
+        return redirect()->route('pengembalian')->with('success', 'Peminjaman berhasil ditambahkan.');
     }
     public function update(Request $request, $id)
     {
@@ -62,7 +62,6 @@ class PeminjamanController extends Controller
         $peminjaman->id_buku = $request->id_buku;
         $peminjaman->save();
 
-        return redirect()->route('peminjaman')->with('success', 'Peminjaman berhasil diperbarui.');
+        return redirect()->route('pengembalian')->with('success', 'Peminjaman berhasil diperbarui.');
     }
-
 }

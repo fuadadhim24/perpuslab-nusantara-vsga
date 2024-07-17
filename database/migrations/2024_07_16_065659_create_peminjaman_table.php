@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('peminjaman', function (Blueprint $table) {
             $table->id();
-            $table->date('tanggal_kembali');
+            $table->date('tanggal_kembali')->nullable();
             $table->date('tanggal_pinjam');
             $table->unsignedBigInteger('id_buku')->nullable();
             $table->foreign('id_buku')->references('id')->on('buku')->onDelete('cascade');

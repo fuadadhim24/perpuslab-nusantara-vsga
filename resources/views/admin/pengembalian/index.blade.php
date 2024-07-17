@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Peminjaman - PerpusLab Nusantara</title>
+    <title>Daftar Pengembalian - PerpusLab Nusantara</title>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="shortcut icon" href="{{ asset('assets/img/perpus.svg') }}">
@@ -67,13 +67,13 @@
                 </div>
                 <div class="sidebar-menu">
                     <ul class="menu">
-                        <li class="sidebar-item active ">
+                        <li class="sidebar-item ">
                             <a href="{{ route('peminjaman') }}" class='sidebar-link'>
                                 <i class="bi bi-stack"></i>
                                 <span>Daftar Peminjaman</span>
                             </a>
                         </li>
-                        <li class="sidebar-item ">
+                        <li class="sidebar-item active ">
                             <a href="{{ route('pengembalian') }}" class='sidebar-link'>
                                 <i class="bi bi-stack"></i>
                                 <span>Daftar Pengembalian</span>
@@ -118,8 +118,8 @@
                 <div class="page-title">
                     <div class="row">
                         <div class="col-12 col-md-6 order-md-1 order-last">
-                            <h3>Daftar peminjaman</h3>
-                            <p class="text-subtitle text-muted">Kelola peminjaman dengan mudah menggunakan tabel
+                            <h3>Daftar pengembalian</h3>
+                            <p class="text-subtitle text-muted">Kelola pengembalian dengan mudah menggunakan tabel
                                 interaktif.
                             </p>
 
@@ -129,7 +129,7 @@
                             <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                                 <ol class="breadcrumb">
                                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-                                    <li class="breadcrumb-item active" aria-current="page">Daftar peminjaman</li>
+                                    <li class="breadcrumb-item active" aria-current="page">Daftar pengembalian</li>
                                 </ol>
                             </nav>
                         </div>
@@ -141,7 +141,7 @@
                     <div class="card">
                         <div class="card-header">
                             <h5 class="card-title">
-                                Tabel Daftar Peminjaman
+                                Tabel Daftar Pengembalian
                             </h5>
                         </div>
                         <div class="card-body">
@@ -151,23 +151,51 @@
                                         <tr>
                                             <th>ID</th>
                                             <th>Tanggal Pinjam</th>
+                                            <th>Tanggal Kembali</th>
                                             <th>ID Buku</th>
                                             <th>Nama Mahasiswa</th>
+                                            <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($peminjaman as $p)
+                                        @php
+                                            use Carbon\Carbon;
+                                        @endphp
+                                        @foreach ($pengembalian as $p)
                                             <tr>
                                                 <td>PJ00{{ $p->id }}</td>
                                                 <td>{{ $p->tanggal_pinjam }}</td>
+                                                <td>{{ $p->tanggal_kembali }}</td>
                                                 <td>BK00{{ $p->id_buku }}</td>
                                                 <td>{{ $p->mahasiswa->nama }}</td>
                                                 <td>
+                                                    @if ($p->tanggal_kembali)
+                                                        {{-- sudah dikembalikan --}}
+                                                        <span class="badge bg-success">Sudah dikembalikan</span>
+                                                    @else
+                                                        @php
+                                                             $dateNow = now(); 
+                                                            $datePinjam = Carbon::parse($p->tanggal_pinjam); 
+                                                            $diffInDays = $datePinjam->diffInDays($dateNow); 
+                                                            $nilaiBulat = floor($diffInDays);
+                                                        @endphp
+                                                        @if ($nilaiBulat>0)
+                                                            <span class="badge bg-warning">tersisa {{ $nilaiBulat }} hari</span>
+                                                        @elseif ($nilaiBulat==0)
+                                                            <span class="badge bg-warning">Tenggat</span>
+                                                        @else
+                                                            <span class="badge bg-danger">Melebihi Tenggat</span>
+                                                        @endif
+                                                        {{-- belum dikembalikan --}}
+                                                    @endif
+                                                </td>
+                                                <td>
                                                     <button type="button" class="btn btn-primary btn-sm"
                                                         data-bs-toggle="modal"
-                                                        data-bs-target="#editPeminjamanModal{{ $p->id }}">Edit</button>
-                                                    <form action="{{ route('peminjaman.destroy', ['id' => $p->id]) }}"
+                                                        data-bs-target="#editPengembalianModal{{ $p->id }}">Edit</button>
+                                                    <form
+                                                        action="{{ route('pengembalian.destroy', ['id' => $p->id]) }}"
                                                         method="POST" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
@@ -185,18 +213,19 @@
                 </section>
                 <!-- Minimal jQuery Datatable end -->
                 <!-- Modal -->
-                @foreach ($peminjaman as $p)
-                    <div class="modal fade" id="editPeminjamanModal{{ $p->id }}" tabindex="-1"
-                        aria-labelledby="editPeminjamanModalLabel{{ $p->id }}" aria-hidden="true">
+                @foreach ($pengembalian as $p)
+                    <div class="modal fade" id="editPengembalianModal{{ $p->id }}" tabindex="-1"
+                        aria-labelledby="editPengembalianModalLabel{{ $p->id }}" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
-                                <form class="form form-vertical" id="editpeminjamanForm{{ $p->id }}"
-                                    method="POST" action="{{ route('peminjaman.update', ['id' => $p->id]) }}">
+                                <form class="form form-vertical" id="editpengembalianForm{{ $p->id }}"
+                                    method="POST" action="{{ route('pengembalian.update', ['id' => $p->id]) }}">
                                     @csrf
                                     @method('PUT')
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="editPeminjamanModalLabel{{ $p->id }}">Edit
-                                            Peminjaman
+                                        <h5 class="modal-title" id="editPengembalianModalLabel{{ $p->id }}">
+                                            Edit
+                                            Pengembalian
                                         </h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
@@ -210,6 +239,14 @@
                                                         <input type="date" id="tanggal_pinjam{{ $p->id }}"
                                                             class="form-control" name="tanggal_pinjam"
                                                             value="{{ $p->tanggal_pinjam }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="form-group">
+                                                        <label for="tanggal_kembali">Tanggal Kembali</label>
+                                                        <input type="date" id="tanggal_kembali{{ $p->id }}"
+                                                            class="form-control" name="tanggal_kembali"
+                                                            value="{{ $p->tanggal_kembali }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
@@ -229,9 +266,11 @@
                                                 <div class="col-12">
                                                     <div class="form-group">
                                                         <label for="id_mahasiswa">ID Mahasiswa</label>
-                                                        <select id="id_mahasiswa{{ $p->id }}" class="form-select" name="id_mahasiswa">
+                                                        <select id="id_mahasiswa{{ $p->id }}"
+                                                            class="form-select" name="id_mahasiswa">
                                                             @foreach ($mahasiswas as $mahasiswa)
-                                                                <option value="{{ $mahasiswa->id }}" {{ $mahasiswa->id == $p->id_mahasiswa ? 'selected' : '' }}>
+                                                                <option value="{{ $mahasiswa->id }}"
+                                                                    {{ $mahasiswa->id == $p->id_mahasiswa ? 'selected' : '' }}>
                                                                     {{ $mahasiswa->nama }}
                                                                 </option>
                                                             @endforeach
@@ -254,20 +293,20 @@
 
                 <!-- Button to trigger modal -->
                 <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal"
-                    data-bs-target="#peminjamanModal">
-                    Tambah Peminjaman
+                    data-bs-target="#pengembalianModal">
+                    Tambah Pengembalian
                 </button>
 
                 <!-- Modal -->
-                <div class="modal fade" id="peminjamanModal" tabindex="-1" aria-labelledby="peminjamanModalLabel"
-                    aria-hidden="true">
+                <div class="modal fade" id="pengembalianModal" tabindex="-1"
+                    aria-labelledby="pengembalianModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <form class="form form-vertical" id="peminjamanForm" method="POST"
-                                action="{{ route('peminjaman.store') }}" enctype="multipart/form-data">
+                            <form class="form form-vertical" id="pengembalianForm" method="POST"
+                                action="{{ route('pengembalian.store') }}" enctype="multipart/form-data">
                                 @csrf
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="peminjamanModalLabel">Tambah Peminjaman Baru</h5>
+                                    <h5 class="modal-title" id="pengembalianModalLabel">Tambah Pengembalian Baru</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
@@ -279,6 +318,13 @@
                                                     <label for="tanggal_pinjam">Tanggal Pinjam</label>
                                                     <input type="date" id="tanggal_pinjam" class="form-control"
                                                         name="tanggal_pinjam" required>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-group">
+                                                    <label for="tanggal_kembali">Tanggal Kembali</label>
+                                                    <input type="date" id="tanggal_kembali" class="form-control"
+                                                        name="tanggal_kembali" required>
                                                 </div>
                                             </div>
                                             <div class="col-12">
@@ -375,7 +421,7 @@
 
     <script>
         function viewFoto(namaFoto) {
-            var fotoUrl = '{{ asset('storage/foto-peminjaman') }}/' + namaFoto;
+            var fotoUrl = '{{ asset('storage/foto-pengembalian') }}/' + namaFoto;
             $('#fotoModalImg').attr('src', fotoUrl);
             $('#fotoModal').modal('show');
         }
@@ -384,7 +430,7 @@
         function deleteClass(id) {
             if (confirm('Are you sure you want to delete this data?')) {
                 $.ajax({
-                    url: '/peminjaman/' + id,
+                    url: '/pengembalian/' + id,
                     type: 'DELETE',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
