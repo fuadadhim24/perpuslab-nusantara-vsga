@@ -165,12 +165,16 @@
                                                 <td>{{ $buku->tanggal_terbit }}</td>
                                                 <td>{{ $buku->penerbit }}</td>
                                                 <td>{{ $buku->pengarang }}</td>
-                                                <td>{{ $buku->foto }}</td>
+                                                <td><button type="button" class="btn btn-secondary btn-sm"
+                                                        type="button" data-bs-toggle="modal"
+                                                        data-bs-target="#fotoModal{{ $buku->id }}">Lihat
+                                                        Foto</button></td>
                                                 <td>{{ $buku->created_at }}</td>
                                                 <td>
+
                                                     <button type="button" class="btn btn-primary btn-sm"
                                                         type="button" data-bs-toggle="modal"
-                                                        data-bs-target="#editbukuModal{{$buku->id}}">Edit</button>
+                                                        data-bs-target="#editbukuModal{{ $buku->id }}">Edit</button>
                                                     <form action="{{ route('buku.destroy', ['id' => $buku->id]) }}"
                                                         method="POST" class="d-inline">
                                                         @csrf
@@ -180,8 +184,9 @@
                                                     </form>
                                                 </td>
                                                 <!-- Modal -->
-                                                <div class="modal fade" id="editbukuModal{{ $buku->id }}" tabindex="-1"
-                                                    aria-labelledby="editbukuModalLabel" aria-hidden="true">
+                                                <div class="modal fade" id="editbukuModal{{ $buku->id }}"
+                                                    tabindex="-1" aria-labelledby="editbukuModalLabel"
+                                                    aria-hidden="true">
                                                     <div class="modal-dialog">
                                                         <div class="modal-content">
                                                             <form class="form form-vertical" id="editbukuForm"
@@ -270,6 +275,30 @@
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                {{-- modal foto --}}
+                                                <div class="modal fade" id="fotoModal{{ $buku->id }}"
+                                                    tabindex="-1" aria-labelledby="fotoModalLabel"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog  modal-dialog-centered modal-sm">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="fotoModalLabel">Foto Buku
+                                                                </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body"
+                                                                style="display: flex; align-items:center ;justify-content: center">
+                                                                <img id="fotoModalImg"
+                                                                    src="{{ asset('storage/assets/img/buku') }}/{{ $buku->foto }}"
+                                                                    class="img-fluid justify-content-center"
+                                                                    alt="Foto Resep">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </tr>
                                         @empty
                                         @endforelse
@@ -352,6 +381,7 @@
                         </div>
                     </div>
                 </div>
+
 
 
             </div>

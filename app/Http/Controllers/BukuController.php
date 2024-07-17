@@ -41,6 +41,7 @@ class BukuController extends Controller
         if($request->hasFile('foto')){
             $fotoPath = $request->file('foto')->store('public/assets/img/buku');
             $namaFoto = basename($fotoPath);
+            // dd($namaFoto);
         }else{
             $namaFoto = null;
         }
@@ -98,7 +99,6 @@ class BukuController extends Controller
         if ($request->hasFile('foto')) {
             $fotoPath = $request->file('foto')->store('public/assets/img/buku');
             $namaFoto = basename($fotoPath);
-            $buku->foto = $namaFoto;
         }
 
         $buku->save();
