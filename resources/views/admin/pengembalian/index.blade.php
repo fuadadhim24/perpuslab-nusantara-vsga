@@ -75,7 +75,7 @@
                         </li>
                         <li class="sidebar-item active ">
                             <a href="{{ route('pengembalian') }}" class='sidebar-link'>
-                                <i class="bi bi-stack"></i>
+                                <i class="bi bi-grid-1x2-fill"></i>
                                 <span>Daftar Pengembalian</span>
                             </a>
                         </li>
@@ -166,7 +166,13 @@
                                             <tr>
                                                 <td>PJ00{{ $p->id }}</td>
                                                 <td>{{ $p->tanggal_pinjam }}</td>
-                                                <td>{{ $p->tanggal_kembali }}</td>
+                                                <td>
+                                                    @if ($p->tanggal_kembali)
+                                                        {{ $p->tanggal_kembali }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </td>
                                                 <td>BK00{{ $p->id_buku }}</td>
                                                 <td>{{ $p->mahasiswa->nama }}</td>
                                                 <td>
@@ -175,14 +181,15 @@
                                                         <span class="badge bg-success">Sudah dikembalikan</span>
                                                     @else
                                                         @php
-                                                             $dateNow = now(); 
-                                                            $datePinjam = Carbon::parse($p->tanggal_pinjam); 
-                                                            $diffInDays = $datePinjam->diffInDays($dateNow); 
+                                                            $dateNow = now();
+                                                            $datePinjam = Carbon::parse($p->tanggal_pinjam);
+                                                            $diffInDays = $datePinjam->diffInDays($dateNow);
                                                             $nilaiBulat = floor($diffInDays);
                                                         @endphp
-                                                        @if ($nilaiBulat>0)
-                                                            <span class="badge bg-warning">tersisa {{ $nilaiBulat }} hari</span>
-                                                        @elseif ($nilaiBulat==0)
+                                                        @if ($nilaiBulat > 0)
+                                                            <span class="badge bg-warning">tersisa {{ $nilaiBulat }}
+                                                                hari</span>
+                                                        @elseif ($nilaiBulat == 0)
                                                             <span class="badge bg-warning">Tenggat</span>
                                                         @else
                                                             <span class="badge bg-danger">Melebihi Tenggat</span>
@@ -191,9 +198,9 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-primary btn-sm"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#editPengembalianModal{{ $p->id }}">Edit</button>
+                                                    {{-- <button type="button" class="btn btn-success btn-sm"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#pengembalianModal{{ $p->id }}">Verifikasi</button> --}}
                                                     <form
                                                         action="{{ route('pengembalian.destroy', ['id' => $p->id]) }}"
                                                         method="POST" class="d-inline">
@@ -202,6 +209,14 @@
                                                         <button type="submit"
                                                             class="btn btn-danger btn-sm">Delete</button>
                                                     </form>
+                                                    @if ($p->tanggal_kembali)
+                                                    @else
+                                                        <button type="button" class="btn btn-primary btn-sm"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#editPengembalianModal{{ $p->id }}">Verifikasi</button>
+                                                    @endif
+
+                                                    
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -224,7 +239,7 @@
                                     @method('PUT')
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="editPengembalianModalLabel{{ $p->id }}">
-                                            Edit
+                                            Verifikasi
                                             Pengembalian
                                         </h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -238,7 +253,7 @@
                                                         <label for="tanggal_pinjam">Tanggal Pinjam</label>
                                                         <input type="date" id="tanggal_pinjam{{ $p->id }}"
                                                             class="form-control" name="tanggal_pinjam"
-                                                            value="{{ $p->tanggal_pinjam }}">
+                                                            value="{{ $p->tanggal_pinjam }}" disabled>
                                                     </div>
                                                 </div>
                                                 <div class="col-12">
@@ -247,34 +262,6 @@
                                                         <input type="date" id="tanggal_kembali{{ $p->id }}"
                                                             class="form-control" name="tanggal_kembali"
                                                             value="{{ $p->tanggal_kembali }}">
-                                                    </div>
-                                                </div>
-                                                <div class="col-12">
-                                                    <div class="form-group">
-                                                        <label for="id_buku">ID Buku</label>
-                                                        <select id="id_buku{{ $p->id }}" class="form-select"
-                                                            name="id_buku">
-                                                            @foreach ($bukus as $buku)
-                                                                <option value="{{ $buku->id }}"
-                                                                    {{ $buku->id == $p->id_buku ? 'selected' : '' }}>
-                                                                    {{ $buku->judul_buku }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-12">
-                                                    <div class="form-group">
-                                                        <label for="id_mahasiswa">ID Mahasiswa</label>
-                                                        <select id="id_mahasiswa{{ $p->id }}"
-                                                            class="form-select" name="id_mahasiswa">
-                                                            @foreach ($mahasiswas as $mahasiswa)
-                                                                <option value="{{ $mahasiswa->id }}"
-                                                                    {{ $mahasiswa->id == $p->id_mahasiswa ? 'selected' : '' }}>
-                                                                    {{ $mahasiswa->nama }}
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
                                                     </div>
                                                 </div>
                                             </div>
@@ -290,81 +277,14 @@
                         </div>
                     </div>
                 @endforeach
-
+                {{-- 
                 <!-- Button to trigger modal -->
                 <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal"
                     data-bs-target="#pengembalianModal">
                     Tambah Pengembalian
-                </button>
+                </button> --}}
 
                 <!-- Modal -->
-                <div class="modal fade" id="pengembalianModal" tabindex="-1"
-                    aria-labelledby="pengembalianModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <form class="form form-vertical" id="pengembalianForm" method="POST"
-                                action="{{ route('pengembalian.store') }}" enctype="multipart/form-data">
-                                @csrf
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="pengembalianModalLabel">Tambah Pengembalian Baru</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="form-body">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="form-group">
-                                                    <label for="tanggal_pinjam">Tanggal Pinjam</label>
-                                                    <input type="date" id="tanggal_pinjam" class="form-control"
-                                                        name="tanggal_pinjam" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="form-group">
-                                                    <label for="tanggal_kembali">Tanggal Kembali</label>
-                                                    <input type="date" id="tanggal_kembali" class="form-control"
-                                                        name="tanggal_kembali" required>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="form-group">
-                                                    <label for="mahasiswa_id">Mahasiswa</label>
-                                                    <select id="mahasiswa_id" class="form-control"
-                                                        name="mahasiswa_id" required>
-                                                        <option value="">Pilih Mahasiswa</option>
-                                                        @foreach ($mahasiswas as $mahasiswa)
-                                                            <option value="{{ $mahasiswa->id }}">
-                                                                {{ $mahasiswa->nama }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-12">
-                                                <div class="form-group">
-                                                    <label for="buku_id">Buku</label>
-                                                    <select id="buku_id" class="form-control" name="buku_id"
-                                                        required>
-                                                        <option value="">Pilih Buku</option>
-                                                        @foreach ($bukus as $buku)
-                                                            <option value="{{ $buku->id }}">
-                                                                {{ $buku->judul_buku }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Save changes</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
 
 
 

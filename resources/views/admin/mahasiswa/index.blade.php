@@ -74,7 +74,7 @@
                         </li>
                         <li class="sidebar-item ">
                             <a href="{{ route('pengembalian') }}" class='sidebar-link'>
-                                <i class="bi bi-stack"></i>
+                                <i class="bi bi-grid-1x2-fill"></i>
                                 <span>Daftar Pengembalian</span>
                             </a>
                         </li>
@@ -165,6 +165,10 @@
                                                 <td>{{ $mahasiswa->jurusan }}</td>
                                                 <td>{{ $mahasiswa->created_at }}</td>
                                                 <td>
+                                                    <button type="button" class="btn btn-secondary btn-sm"
+                                                        type="button" data-bs-toggle="modal"
+                                                        data-bs-target="#fotoModal{{ $mahasiswa->id }}">Lihat
+                                                        Foto</button>
                                                     <button type="button" class="btn btn-primary btn-sm"
                                                         type="button" data-bs-toggle="modal"
                                                         data-bs-target="#editMahasiswaModal{{ $mahasiswa->id }}">Edit</button>
@@ -283,6 +287,32 @@
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                {{-- modal foto --}}
+                                                {{-- modal foto --}}
+                                                <div class="modal fade" id="fotoModal{{ $mahasiswa->id }}"
+                                                    tabindex="-1" aria-labelledby="fotoModalLabel"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog  modal-dialog-centered modal-sm">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="fotoModalLabel">Foto
+                                                                    Mahasiswa
+                                                                </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body"
+                                                                style="display: flex; align-items:center ;justify-content: center">
+                                                                <img id="fotoModalImg"
+                                                                    src="{{ asset('storage/assets/img/mahasiswa') }}/{{ $mahasiswa->foto }}"
+                                                                    class="img-fluid justify-content-center"
+                                                                    alt="Foto Resep">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </tr>
                                         @empty
                                         @endforelse
@@ -353,13 +383,13 @@
                                                         name="jurusan" placeholder="Jurusan">
                                                 </div>
                                             </div>
-                                            {{-- <div class="col-12">
+                                            <div class="col-12">
                                                 <div class="form-group">
                                                     <label for="foto">Foto Mahasiswa</label>
                                                     <input type="file" id="foto" class="form-control"
                                                         name="foto">
                                                 </div>
-                                            </div> --}}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

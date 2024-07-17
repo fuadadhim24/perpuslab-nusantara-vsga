@@ -14,6 +14,7 @@ class MahasiswaModel extends Model
         'nama',
         'tempat_lahir',
         'tanggal_lahir',
+        'foto',
         'jurusan',
     ];
 }

@@ -33,11 +33,11 @@ class MahasiswaController extends Controller
             'jurusan' => 'required'
         ]);
 
-        // $namaFoto = null;
-        // if ($request->hasFile('foto')) {
-        //     $fotoPath = $request->file('foto')->store('public/assets/img/mahasiswa');
-        //     $namaFoto = basename($fotoPath);
-        // }
+        $namaFoto = null;
+        if ($request->hasFile('foto')) {
+            $fotoPath = $request->file('foto')->store('public/assets/img/mahasiswa');
+            $namaFoto = basename($fotoPath);
+        }
 
         MahasiswaModel::create([
             'nim' => $request->nim,
@@ -45,7 +45,7 @@ class MahasiswaController extends Controller
             'tempat_lahir' => $request->tempat_lahir,
             'tanggal_lahir' => $request->tanggal_lahir,
             'jurusan' => $request->jurusan,
-            // 'foto' => $namaFoto,
+            'foto' => $namaFoto,
         ]);
 
         return redirect()->route('mahasiswa')->with('success', 'Mahasiswa berhasil ditambahkan.');
@@ -59,11 +59,11 @@ class MahasiswaController extends Controller
         'tanggal_lahir' => 'required',
         'jurusan' => 'required'
     ]);
-    // $namaFoto = null;
-    //     if ($request->hasFile('foto')) {
-    //         $fotoPath = $request->file('foto')->store('public/assets/img/mahasiswa');
-    //         $namaFoto = basename($fotoPath);
-    //     }
+    $namaFoto = null;
+        if ($request->hasFile('foto')) {
+            $fotoPath = $request->file('foto')->store('public/assets/img/mahasiswa');
+            $namaFoto = basename($fotoPath);
+        }
 
     $mahasiswa = MahasiswaModel::findOrFail($id);
 
@@ -71,6 +71,7 @@ class MahasiswaController extends Controller
     $mahasiswa->nama = $request->nama;
     $mahasiswa->tempat_lahir = $request->tempat_lahir;
     $mahasiswa->tanggal_lahir = $request->tanggal_lahir;
+    $mahasiswa->foto = $namaFoto;
     $mahasiswa->jurusan = $request->jurusan;
 
     

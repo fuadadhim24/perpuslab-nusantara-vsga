@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('tempat_lahir');
             $table->date('tanggal_lahir');
             $table->string('jurusan');
+            $table->string('foto');
             $table->timestamps();
         });
         DB::table('mahasiswa')->insert([
@@ -26,6 +27,7 @@ return new class extends Migration
             'nama' => 'Fuad Adhim Al Hasan',
             'tempat_lahir' => 'Bojonegoro',
             'tanggal_lahir' => '2004-04-05',
+            'foto' => '',
             'jurusan' => 'Teknik Informatika'
         ]);
     }

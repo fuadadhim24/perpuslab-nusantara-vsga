@@ -49,17 +49,13 @@ class PengembalianController extends Controller
     {
         // dd($request);
         $request->validate([
-            'tanggal_pinjam' => 'required|date',
-            'id_mahasiswa' => 'required',
-            'id_buku' => 'required',
+            'tanggal_kembali' => 'required|date',
         ]);
 
         $peminjaman = PeminjamanModel::findOrFail($id);
 
-        $peminjaman->tanggal_pinjam = $request->tanggal_pinjam;
-        $peminjaman->tanggal_kembali = null;
-        $peminjaman->id_mahasiswa = $request->id_mahasiswa;
-        $peminjaman->id_buku = $request->id_buku;
+        
+        $peminjaman->tanggal_kembali = $request->tanggal_kembali;
         $peminjaman->save();
 
         return redirect()->route('pengembalian')->with('success', 'Peminjaman berhasil diperbarui.');
